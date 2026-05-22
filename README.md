@@ -316,4 +316,4 @@ Trabalho desenvolvido para a disciplina ministrada pela Prof. Mestre Sirley Ambr
 
 ## Licença
 
-Lucas Vasconcelos.
+Lucas Vasconcelos G. de Souza.
