@@ -1,22 +1,34 @@
-# 💉 ImuniData — Sistema de Monitoramento de Vacinação
+# ImuniData — Sistema de Monitoramento de Vacinação
 
-API REST desenvolvida em **Java + Spring Boot** para consulta e análise de dados sobre cobertura vacinal por região e faixa etária. O objetivo é transformar dados brutos em uma ferramenta de apoio à tomada de decisão para secretarias de saúde e unidades de pronto atendimento.
-
-## 📑 Sumário
-
-- [Tecnologias](#-tecnologias)
-- [Arquitetura](#-arquitetura)
-- [Como executar](#%EF%B8%8F-como-executar)
-- [Dicionário de Dados](#-dicionário-de-dados)
-- [Mapeamento de Rotas](#-mapeamento-de-rotas)
-- [Importação de CSV](#-importação-de-csv)
-- [Justificativa Técnica: Uso de Optional](#-justificativa-técnica-uso-de-optional)
-- [Prints de Funcionamento](#-prints-de-funcionamento)
-- [Autores](#-autores)
+API REST desenvolvida em Java + Spring Boot para consulta e análise de dados sobre cobertura vacinal por região e faixa etária. O objetivo é transformar dados brutos em uma ferramenta de apoio à tomada de decisão para secretarias de saúde e unidades de pronto atendimento.
 
 ---
 
-## 🛠 Tecnologias
+## Repositório do Frontend
+
+O frontend React (interface visual) deste projeto está em um repositório separado:
+
+[api-imunedata-frontend](https://github.com/LucasVasconcelos04/api-imunedata-frontend)
+
+Para utilizar o sistema completo, é necessário clonar e executar ambos os projetos.
+
+---
+
+## Sumário
+
+- [Tecnologias](#tecnologias)
+- [Arquitetura](#arquitetura)
+- [Como executar](#como-executar)
+- [Dicionário de Dados](#dicionário-de-dados)
+- [Mapeamento de Rotas](#mapeamento-de-rotas)
+- [Importação de CSV](#importação-de-csv)
+- [Justificativa Técnica: Uso de Optional](#justificativa-técnica-uso-de-optional)
+- [Prints de Funcionamento](#prints-de-funcionamento)
+- [Autores](#autores)
+
+---
+
+## Tecnologias
 
 | Categoria | Tecnologia |
 |---|---|
@@ -31,9 +43,9 @@ API REST desenvolvida em **Java + Spring Boot** para consulta e análise de dado
 
 ---
 
-## 🏗 Arquitetura
+## Arquitetura
 
-O projeto segue rigorosamente a **arquitetura em camadas**:
+O projeto segue rigorosamente a arquitetura em camadas:
 
 ```
 br.com.luquinhas.apiimunedata/
@@ -43,7 +55,7 @@ br.com.luquinhas.apiimunedata/
 └── entity/        → Camada de modelo (entidades JPA)
 ```
 
-**Fluxo de uma requisição:**
+Fluxo de uma requisição:
 
 ```
 Cliente HTTP → Controller → Service → Repository → Banco H2
@@ -53,7 +65,7 @@ Cada camada conhece apenas a camada imediatamente abaixo, garantindo baixo acopl
 
 ---
 
-## ▶️ Como executar
+## Como executar
 
 ### Pré-requisitos
 
@@ -64,7 +76,7 @@ Cada camada conhece apenas a camada imediatamente abaixo, garantindo baixo acopl
 
 1. Clone o repositório:
 ```bash
-   git clone https://github.com/SEU-USUARIO/api-ImuneData.git
+   git clone https://github.com/LucasVasconcelos04/api-ImuneData.git
    cd api-ImuneData
 ```
 
@@ -84,7 +96,7 @@ Cada camada conhece apenas a camada imediatamente abaixo, garantindo baixo acopl
 
 ---
 
-## 📚 Dicionário de Dados
+## Dicionário de Dados
 
 Entidade: **`RegistroVacinacao`** (tabela `registro_vacinacao`)
 
@@ -98,16 +110,16 @@ Entidade: **`RegistroVacinacao`** (tabela `registro_vacinacao`)
 | `quantidadeAplicada` | `Integer` | `INTEGER` | Sim | Número total de doses aplicadas no registro. |
 | `dataRegistro` | `LocalDate` | `DATE` | Sim | Data em que o registro foi efetuado. |
 
-### Por que o campo `dose` é um Enum?
+### Por que o campo dose é um Enum?
 
-Optei por modelar `dose` como **enum** em vez de `String` livre para:
+Optei por modelar `dose` como enum em vez de `String` livre para:
 - **Garantir integridade dos dados:** impede que valores inválidos sejam salvos no banco (ex: "primeria", "1a dose", "DOSE_UM").
 - **Facilitar manutenção:** centralizar os valores válidos em um único ponto do código.
 - **Autocomplete na IDE:** desenvolvedores não precisam decorar os valores possíveis.
 
 A persistência usa `@Enumerated(EnumType.STRING)` para salvar o nome do enum como texto no banco, garantindo legibilidade e segurança em caso de reordenação no código.
 
-### Enum auxiliar `Regiao`
+### Enum auxiliar Regiao
 
 Para o filtro por região geográfica, foi criado o enum `Regiao` que mapeia as cinco regiões do Brasil para suas respectivas siglas de estado:
 
@@ -123,7 +135,7 @@ Esse enum não é persistido no banco — é usado apenas como utilitário para 
 
 ---
 
-## 🗺 Mapeamento de Rotas
+## Mapeamento de Rotas
 
 Base URL: `http://localhost:8080`
 
@@ -145,7 +157,7 @@ Base URL: `http://localhost:8080`
 | `GET` | `/api/vacinacao/estado/{estado}` | Filtra registros por estado (sigla UF) | 200 OK |
 | `GET` | `/api/vacinacao/regiao/{regiao}` | Filtra registros por região geográfica | 200 OK / 400 Bad Request |
 
-**Valores aceitos para `{regiao}`:** `NORTE`, `NORDESTE`, `CENTRO_OESTE`, `SUDESTE`, `SUL` (case-insensitive).
+Valores aceitos para `{regiao}`: `NORTE`, `NORDESTE`, `CENTRO_OESTE`, `SUDESTE`, `SUL` (case-insensitive).
 
 ### Importação de Dados
 
@@ -168,7 +180,7 @@ Base URL: `http://localhost:8080`
 
 ---
 
-## 📂 Importação de CSV
+## Importação de CSV
 
 O endpoint `POST /api/vacinacao/upload-csv` permite popular o banco a partir de um arquivo CSV.
 
@@ -194,7 +206,7 @@ Rio de Janeiro;RJ;COVID-19;SEGUNDA;3200;2026-03-05
 3. Body: `Multipart Form`
 4. Campo: `arquivo` (tipo: File), apontando para o `.csv` desejado
 
-**Resposta esperada:**
+Resposta esperada:
 
 ```json
 {
@@ -210,17 +222,17 @@ Como os arquivos reais do OpenDataSUS têm dezenas de gigabytes e milhões de li
 
 ---
 
-## 🛡 Justificativa Técnica: Uso de Optional
+## Justificativa Técnica: Uso de Optional
 
 ### O problema dos valores nulos
 
 Em Java, qualquer referência pode ser `null`. Isso significa que ao chamar um método que retorna um objeto, o desenvolvedor pode esquecer de verificar se o retorno é `null` antes de usá-lo, causando `NullPointerException` em tempo de execução — um dos erros mais comuns e perigosos da linguagem.
 
-Tony Hoare, criador do conceito de referência nula em 1965, chamou sua própria invenção de **"o erro de um bilhão de dólares"**, justamente pelo prejuízo que causa em sistemas reais.
+Tony Hoare, criador do conceito de referência nula em 1965, chamou sua própria invenção de "o erro de um bilhão de dólares", justamente pelo prejuízo que causa em sistemas reais.
 
-### Como `Optional` resolve
+### Como Optional resolve
 
-`Optional<T>` é uma "caixa" que pode conter um valor (`Optional.of(valor)`) ou estar vazia (`Optional.empty()`). Ao retornar `Optional`, o método **comunica explicitamente** que o valor pode não existir, forçando quem consome o método a tratar esse caso.
+`Optional<T>` é uma "caixa" que pode conter um valor (`Optional.of(valor)`) ou estar vazia (`Optional.empty()`). Ao retornar `Optional`, o método comunica explicitamente que o valor pode não existir, forçando quem consome o método a tratar esse caso.
 
 ### Aplicação no projeto
 
@@ -252,62 +264,56 @@ return service.buscarPorId(id)
 
 ---
 
-## 📸 Prints de Funcionamento
-
-> ⚠️ Substitua os caminhos abaixo pelos prints reais após executar e testar a aplicação.
+## Prints de Funcionamento
 
 ### Backend — testes no Insomnia
 
 **1. Criação de registro (POST 201 Created)**
-![POST Criar Registro](docs/prints/post-criar.png)
+
+<img width="1413" height="465" alt="01-post-criar" src="https://github.com/user-attachments/assets/b4bb007e-d575-4cc0-80dc-db03d5add617" />
 
 **2. Listagem de todos os registros (GET 200 OK)**
-![GET Listar Todos](docs/prints/get-listar.png)
+
+<img width="1394" height="925" alt="02-get-listar" src="https://github.com/user-attachments/assets/afe8076f-e06a-474e-b507-23df82906516" />
 
 **3. Busca por ID inexistente (GET 404 Not Found)**
-![GET 404](docs/prints/get-404.png)
 
-**4. Filtro por vacina (GET 200 OK)**
-![GET por Vacina](docs/prints/get-vacina.png)
+<img width="1396" height="496" alt="03-get-404" src="https://github.com/user-attachments/assets/6c80bf65-abb0-4cac-a168-8ecddb3f9bd3" />
 
-**5. Filtro por estado (GET 200 OK)**
-![GET por Estado](docs/prints/get-estado.png)
+**4. Filtro por região (GET 200 OK)**
 
-**6. Filtro por região (GET 200 OK)**
-![GET por Região](docs/prints/get-regiao.png)
+<img width="1357" height="909" alt="04-filtro-regiao" src="https://github.com/user-attachments/assets/159a74c3-1cf5-4983-ab9f-cd15e08eb0c7" />
 
-**7. Importação de CSV (POST 201 Created)**
-![POST Upload CSV](docs/prints/upload-csv.png)
+**5. Importação de CSV (POST 201 Created)**
+
+<img width="1250" height="374" alt="05-upload-csv" src="https://github.com/user-attachments/assets/0851b124-f56b-433d-8efd-103f27b2add1" />
 
 ### Banco de dados — H2 Console
 
-**8. Dados persistidos no H2**
-![H2 Console](docs/prints/h2-console.png)
+**6. Dados persistidos no H2**
+
+<img width="1246" height="945" alt="06-h2-console" src="https://github.com/user-attachments/assets/3db7135f-8bd3-4759-b5a3-e291fbd7fc84" />
 
 ### Frontend — React
 
-**9. Dashboard com listagem**
-![Dashboard React](docs/prints/dashboard.png)
+**7. Dashboard com filtros aplicados (Aba Registros)**
 
-**10. Filtro em tempo real**
-![Filtro](docs/prints/filtro.png)
+<img width="1875" height="939" alt="07-frontend-tabela" src="https://github.com/user-attachments/assets/3ae2d9f2-171e-4e73-ac63-68ef926a7545" />
 
-**11. Formulário de cadastro**
-![Formulário](docs/prints/formulario.png)
+**8. Formulário de cadastro (Aba Cadastrar)**
 
-**12. Resumo por estado**
-![Resumo](docs/prints/resumo.png)
+<img width="1888" height="956" alt="08-frontend-cadastro" src="https://github.com/user-attachments/assets/ffc91e38-463b-452a-b13d-6654e08a425b" />
 
 ---
 
-## 👥 Autores
+## Autores
 
-- **Lucas Vasconcelos Gonçalves de Souza** — [GitHub](https://github.com/SEU-USUARIO)
+- **Lucas Vasconcelos Gonçalves de Souza** — [GitHub](https://github.com/LucasVasconcelos04)
 
-> Trabalho desenvolvido para a disciplina ministrada pela **Profa. Mestre Sirley Ambrosia Vitorio Addão**, FATEC São Caetano do Sul.
+Trabalho desenvolvido para a disciplina ministrada pela Prof. Mestre Sirley Ambrosia Vitorio Addão, FATEC Ipiranga.
 
 ---
 
-## 📄 Licença
+## Licença
 
-Projeto acadêmico — uso educacional.
+Lucas Vasconcelos.
